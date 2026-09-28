@@ -1,0 +1,287 @@
+-- ==========================================
+-- UNIVERSAL KEY SYSTEM GUI
+-- Works on: Xeno, Solara, Delta, Krnl, Fluxus,
+--           Hydrogen, Synapse, Codex, Arceus X
+-- ==========================================
+
+-- Wait for game to load
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+-- Universal wait (falls back to legacy wait on old executors)
+local function uwait(t)
+    if task and task.wait then
+        task.wait(t)
+    else
+        wait(t)
+    end
+end
+
+-- Universal clipboard
+local function copyToClipboard(text)
+    if setclipboard then
+        pcall(setclipboard, text)
+        return true
+    elseif toclipboard then
+        pcall(toclipboard, text)
+        return true
+    elseif set_clipboard then
+        pcall(set_clipboard, text)
+        return true
+    end
+    return false
+end
+
+-- Create the ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KeySystemGui"
+ScreenGui.ResetOnSpawn = false
+
+-- Parent with fallback (critical for Arceus X and mobile executors)
+local ok = pcall(function()
+    ScreenGui.Parent = game:GetService("CoreGui")
+end)
+if not ok then
+    ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+end
+
+-- Remove any old duplicate GUI
+if ScreenGui.Parent then
+    local old = ScreenGui.Parent:FindFirstChild("KeySystemGui")
+    if old and old ~= ScreenGui then
+        old:Destroy()
+    end
+end
+
+-- Main Background Frame (Kept Black)
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 350, 0, 240)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 8)
+UICorner.Parent = MainFrame
+
+-- ==========================================
+-- CIRCULAR "BH" LOGO SECTION
+-- ==========================================
+local LogoFrame = Instance.new("Frame")
+LogoFrame.Size = UDim2.new(0, 45, 0, 45)
+LogoFrame.Position = UDim2.new(0, 10, 0, 8)
+LogoFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+LogoFrame.BorderSizePixel = 0
+LogoFrame.Parent = MainFrame
+
+local LogoCorner = Instance.new("UICorner")
+LogoCorner.CornerRadius = UDim.new(1, 0)
+LogoCorner.Parent = LogoFrame
+
+local LogoStroke = Instance.new("UIStroke")
+LogoStroke.Color = Color3.fromRGB(139, 0, 0)
+LogoStroke.Thickness = 2
+LogoStroke.Parent = LogoFrame
+
+local LogoText = Instance.new("TextLabel")
+LogoText.Size = UDim2.new(1, 0, 1, 0)
+LogoText.Position = UDim2.new(0, 0, 0, 0)
+LogoText.BackgroundTransparency = 1
+LogoText.Text = "BH"
+LogoText.TextColor3 = Color3.fromRGB(255, 255, 255)
+LogoText.TextSize = 18
+LogoText.Font = Enum.Font.GothamBold
+LogoText.Parent = LogoFrame
+
+-- ==========================================
+-- TEXT AND UI ELEMENTS
+-- ==========================================
+local TitleText = Instance.new("TextLabel")
+TitleText.Size = UDim2.new(1, -70, 0, 25)
+TitleText.Position = UDim2.new(0, 65, 0, 10)
+TitleText.BackgroundTransparency = 1
+TitleText.Text = "Bunny-Hub"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextSize = 18
+TitleText.Font = Enum.Font.GothamBold
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Parent = MainFrame
+
+local SubtitleText = Instance.new("TextLabel")
+SubtitleText.Size = UDim2.new(1, -70, 0, 15)
+SubtitleText.Position = UDim2.new(0, 65, 0, 35)
+SubtitleText.BackgroundTransparency = 1
+SubtitleText.Text = "Steal a Brainrot"
+SubtitleText.TextColor3 = Color3.fromRGB(150, 150, 150)
+SubtitleText.TextSize = 14
+SubtitleText.Font = Enum.Font.Gotham
+SubtitleText.TextXAlignment = Enum.TextXAlignment.Left
+SubtitleText.Parent = MainFrame
+
+local Divider = Instance.new("Frame")
+Divider.Size = UDim2.new(1, -20, 0, 1)
+Divider.Position = UDim2.new(0, 10, 0, 60)
+Divider.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Divider.BorderSizePixel = 0
+Divider.Parent = MainFrame
+
+local InstructionText = Instance.new("TextLabel")
+InstructionText.Size = UDim2.new(1, -20, 0, 20)
+InstructionText.Position = UDim2.new(0, 10, 0, 75)
+InstructionText.BackgroundTransparency = 1
+InstructionText.Text = "Join to our discord to get key."
+InstructionText.TextColor3 = Color3.fromRGB(200, 200, 200)
+InstructionText.TextSize = 14
+InstructionText.Font = Enum.Font.Gotham
+InstructionText.TextXAlignment = Enum.TextXAlignment.Left
+InstructionText.Parent = MainFrame
+
+-- Input Box
+local InputFrame = Instance.new("Frame")
+InputFrame.Size = UDim2.new(1, -20, 0, 40)
+InputFrame.Position = UDim2.new(0, 10, 0, 100)
+InputFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+InputFrame.BorderSizePixel = 0
+InputFrame.Parent = MainFrame
+
+local InputCorner = Instance.new("UICorner")
+InputCorner.CornerRadius = UDim.new(0, 6)
+InputCorner.Parent = InputFrame
+
+local InputStroke = Instance.new("UIStroke")
+InputStroke.Color = Color3.fromRGB(139, 0, 0)
+InputStroke.Thickness = 1.5
+InputStroke.Parent = InputFrame
+
+local KeyInput = Instance.new("TextBox")
+KeyInput.Size = UDim2.new(1, -20, 1, 0)
+KeyInput.Position = UDim2.new(0, 10, 0, 0)
+KeyInput.BackgroundTransparency = 1
+KeyInput.Text = ""
+KeyInput.PlaceholderText = "your key..."
+KeyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.TextSize = 14
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.TextXAlignment = Enum.TextXAlignment.Left
+KeyInput.ClearTextOnFocus = false
+KeyInput.Parent = InputFrame
+
+-- Check Key Button
+local CheckButton = Instance.new("TextButton")
+CheckButton.Size = UDim2.new(1, -20, 0, 40)
+CheckButton.Position = UDim2.new(0, 10, 0, 150)
+CheckButton.BackgroundColor3 = Color3.fromRGB(139, 0, 0)
+CheckButton.BorderSizePixel = 0
+CheckButton.Text = "Check key"
+CheckButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CheckButton.TextSize = 15
+CheckButton.Font = Enum.Font.GothamBold
+CheckButton.Parent = MainFrame
+
+local CheckCorner = Instance.new("UICorner")
+CheckCorner.CornerRadius = UDim.new(0, 6)
+CheckCorner.Parent = CheckButton
+
+-- Get Key Button
+local GetButton = Instance.new("TextButton")
+GetButton.Size = UDim2.new(0.5, -15, 0, 35)
+GetButton.Position = UDim2.new(0, 10, 0, 195)
+GetButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+GetButton.BorderSizePixel = 0
+GetButton.Text = "Get key"
+GetButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+GetButton.TextSize = 14
+GetButton.Font = Enum.Font.GothamBold
+GetButton.Parent = MainFrame
+
+local GetCorner = Instance.new("UICorner")
+GetCorner.CornerRadius = UDim.new(0, 6)
+GetCorner.Parent = GetButton
+
+-- Buy Premium Button
+local BuyButton = Instance.new("TextButton")
+BuyButton.Size = UDim2.new(0.5, -15, 0, 35)
+BuyButton.Position = UDim2.new(0.5, 5, 0, 195)
+BuyButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+BuyButton.BorderSizePixel = 0
+BuyButton.Text = "discord.gg/bFBJRTGU3Y"
+BuyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+BuyButton.TextSize = 14
+BuyButton.Font = Enum.Font.GothamBold
+BuyButton.Parent = MainFrame
+
+local BuyCorner = Instance.new("UICorner")
+BuyCorner.CornerRadius = UDim.new(0, 6)
+BuyCorner.Parent = BuyButton
+
+-- Bottom Save Text
+local SaveText = Instance.new("TextLabel")
+SaveText.Size = UDim2.new(1, -20, 0, 15)
+SaveText.Position = UDim2.new(0, 10, 0, 235)
+SaveText.BackgroundTransparency = 1
+SaveText.Text = "your key is saved on this device after it checks out."
+SaveText.TextColor3 = Color3.fromRGB(120, 120, 120)
+SaveText.TextSize = 11
+SaveText.Font = Enum.Font.Gotham
+SaveText.TextXAlignment = Enum.TextXAlignment.Left
+SaveText.Parent = MainFrame
+
+-- ==========================================
+-- BUTTON FUNCTIONALITY
+-- ==========================================
+local isChecking = false
+
+CheckButton.MouseButton1Click:Connect(function()
+    if isChecking then return end
+    isChecking = true
+
+    local key = KeyInput.Text
+    if key == "" then
+        CheckButton.Text = "Please enter a key!"
+        uwait(2)
+        CheckButton.Text = "Check key"
+        isChecking = false
+        return
+    end
+
+    CheckButton.Text = "Checking..."
+    uwait(1.5)
+
+    -- Replace this with real Luarmor validation later
+    if key == "test" then
+        CheckButton.Text = "Success!"
+        CheckButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        uwait(1)
+        ScreenGui:Destroy()
+    else
+        CheckButton.Text = "Invalid Key"
+        CheckButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        uwait(2)
+        CheckButton.Text = "Check key"
+        CheckButton.BackgroundColor3 = Color3.fromRGB(139, 0, 0)
+        isChecking = false
+    end
+end)
+
+GetButton.MouseButton1Click:Connect(function()
+    local link = "https://discord.gg/bFBJRTGU3Y"
+    if copyToClipboard(link) then
+        GetButton.Text = "Copied!"
+    else
+        GetButton.Text = "Check console"
+        print("Get Key Link: " .. link)
+    end
+    uwait(2)
+    GetButton.Text = "Get key"
+end)
+
+BuyButton.MouseButton1Click:Connect(function()
+    BuyButton.Text = "Click get key"
+    uwait(1)
+    BuyButton.Text = "discord.gg/bFBJRTGU3Y"
+end)
